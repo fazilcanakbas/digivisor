@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  password   String
+  agencyName String
+  packageId  Int      
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  agency     Agency?
+}
+
+model Agency {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  user               User     @relation(fields: [userId], references: [id])
+  userId             String   @unique @db.ObjectId
+  name               String
+  packageId          Int      
+  subdomain          String   @unique
+  customDomain       String?
+  themeId            Int?
+  colors             Json?
+  logo               String?
+  heroImage          String?
+  heroTitle          String?
+  heroSubtitle       String?
+  primaryCTA         String?
+  secondaryCTA       String?
+  toursTitle         String?
+  toursSubtitle      String?
+  featuresTitle      String?
+  featuresSubtitle   String?
+  testimonialTitle   String?
+  testimonialSubtitle String?
+  footerTagline      String?
+  socialLinks        Json?
+  contactInfo        Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Package {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  packageId  Int      @unique
+  name       String
+  price      Int
+  features   String[]
+  popular    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Tour {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug         String   @unique
+  name         String
+  description  String
+  image        String
+  price        Int
+  duration     Int
+  location     String
+  rating       Float
+  reviewCount  Int
+  featured     Boolean  @default(false)
+  includesList String[]
+  excludesList String[]
+  itinerary    Json[]
+  agencyId     String   @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  avatar    String?
+  rating    Int
+  comment   String
+  tourName  String
+  agencyId  String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
